@@ -7,7 +7,7 @@ import os
 import datetime
 import streamlit as st
 import pandas as pd
-import psycopg2
+import psycopg
 import plotly.graph_objects as go
 import plotly.express as px
 from dotenv import load_dotenv
@@ -88,7 +88,7 @@ def load_data():
     if not url:
         return pd.DataFrame()
     try:
-        conn = psycopg2.connect(url.split("&channel_binding")[0], connect_timeout=10)
+        conn = psycopg.connect(url.split("&channel_binding")[0], connect_timeout=10)
         df = pd.read_sql("SELECT * FROM weather ORDER BY timestamp DESC LIMIT 100000", conn)
         conn.close()
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -103,7 +103,7 @@ def get_count():
     if not url:
         return 0
     try:
-        conn = psycopg2.connect(url.split("&channel_binding")[0], connect_timeout=10)
+        conn = psycopg.connect(url.split("&channel_binding")[0], connect_timeout=10)
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM weather")
         n = cur.fetchone()[0]
