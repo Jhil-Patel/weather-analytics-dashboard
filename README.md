@@ -2,7 +2,7 @@
 
 A real-time weather data pipeline and interactive dashboard tracking **21 cities across India and Canada** with ML-based temperature forecasting.
 
-**Live Demo:** [Click to view →](https://your-app.streamlit.app)
+**Live Demo:** [Click to view →](https://weather-analytics-dashboard-jp.streamlit.app)
 
 ---
 
