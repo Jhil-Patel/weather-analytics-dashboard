@@ -7,7 +7,8 @@ import os
 import datetime
 import streamlit as st
 import pandas as pd
-import psycopg
+import psycopg2
+from sqlalchemy import create_engine
 import plotly.graph_objects as go
 import plotly.express as px
 from dotenv import load_dotenv
@@ -88,9 +89,8 @@ def load_data():
     if not url:
         return pd.DataFrame()
     try:
-        conn = psycopg.connect(url.split("&channel_binding")[0], connect_timeout=10)
-        df = pd.read_sql("SELECT * FROM weather ORDER BY timestamp DESC LIMIT 100000", conn)
-        conn.close()
+        engine = create_engine(url.split("&channel_binding")[0])
+        df = pd.read_sql("SELECT * FROM weather ORDER BY timestamp DESC LIMIT 100000", engine)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
         return df
     except Exception as e:
@@ -103,12 +103,10 @@ def get_count():
     if not url:
         return 0
     try:
-        conn = psycopg.connect(url.split("&channel_binding")[0], connect_timeout=10)
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM weather")
-        n = cur.fetchone()[0]
-        conn.close()
-        return n
+        engine = create_engine(url.split("&channel_binding")[0])
+        with engine.connect() as conn:
+            result = conn.execute(__import__('sqlalchemy').text("SELECT COUNT(*) FROM weather"))
+            return result.fetchone()[0]
     except Exception:
         return 0
 
